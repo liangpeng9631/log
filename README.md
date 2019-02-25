@@ -1,4 +1,4 @@
-# log4j2_write_DB
+# log4j2-write-DB
 
 #### 项目介绍
 利用log4j2收集日志并写入DB中
