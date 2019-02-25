@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- status=debug 可以查看log4j的装配过程 -->  
+<configuration status="off" monitorInterval="1800">
+
+    <properties>
+    	<!-- 日志目录 -->
+        <property name="LOG_HOME">/data/logs/log4j2_write_DB</property>  
+        
+        <!-- 日志备份目录 -->  
+        <property name="BACKUP_HOME">{LOG_HOME}/backup</property>  
+        
+        <!-- 应用名称 -->
+        <property name="STAT_NAME">app</property>  
+        
+        <!-- 服务器名称 -->
+        <property name="SERVER_NAME">web</property>  
+        
+		<!-- 日志表名 -->
+        <property name="TABLE_NAME">logger_info</property>
+    </properties>  
+    
+    <appenders >
+    
+        <!-- 定义控制台输出格式   -->
+        <Console name="Console" target="SYSTEM_OUT" follow="true">  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread] - %msg%n" />  
+        </Console>
+        
+        <!-- 日志文件规则    -->
+        <RollingRandomAccessFile name="DevLog" fileName="${LOG_HOME}/${SERVER_NAME}" filePattern="${LOG_HOME}/${SERVER_NAME}.%d{yyyy-MM-dd-HH}.log">  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread] - %msg%n" />  
+            <Policies>  
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />  
+            </Policies>  
+        </RollingRandomAccessFile>
+        
+        <!--写入数据库配置-->
+        <JDBC name="databaseAppender" tableName="${TABLE_NAME}" >
+            <ConnectionFactory class="org.fw.little.base.util.LogConnectionFactory" method="getDatabaseConnection" />
+            <Column name="CLASS" pattern="%C:%L" />
+            <Column name="METHOD" pattern="%M" />
+            <Column name="LOGLEVEL" pattern="%p" />
+            <Column name="MSG" pattern="%m"/>
+            <Column name="CREATETIME" pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}"/>
+        </JDBC>
+
+    </appenders>
+    
+    <loggers>
+		<!-- includeLocation="true"提取类名和方法名但会影响性能，异步慢30-100倍 -->
+        <asyncRoot level="INFO">
+        	<appender-ref ref="databaseAppender" level="INFO" />
+		<!-- <appender-ref ref="Console" /> -->
+		<!-- <appender-ref ref="DevLog" /> -->
+        </asyncRoot>
+    </loggers>
+ 
+</configuration>
