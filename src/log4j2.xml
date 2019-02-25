@@ -44,7 +44,7 @@
             <Column name="MSG" pattern="%m"/>
             <Column name="CREATETIME" pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}"/>
         </JDBC>
-
+	<!-- 日志写入mongo待验证 -->
     </appenders>
     
     <loggers>
